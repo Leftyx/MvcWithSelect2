@@ -1,0 +1,43 @@
+﻿/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+    font-size: 12px;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    display: block;
+    color: #ff0000;
+    opacity: 0.9; 
+    pointer-events: auto;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 12px;
+}
+
+.validation-summary-errors li
+{
+    line-height: 16px;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+.input-xlarge {
+    width: 200px;
+}

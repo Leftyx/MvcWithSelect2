@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET MVC 4 + Select2 and client validation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="copyright" content="" />
+    <meta name="HandheldFriendly" content="True" />
+    @System.Web.Optimization.Styles.Render("~/bundles/css")
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    <div>
+        <ul id="Errors"></ul>
+    </div>
+    @System.Web.Optimization.Scripts.Render("~/bundles/scripts")
+    @System.Web.Optimization.Scripts.Render("~/bundles/App")
+    <script type="text/javascript">
+        $.validator.setDefaults({
+            ignore: ":input:hidden:not('.select2')",
+            showErrors: function (errorMap, errorList) {
+                this.defaultShowErrors();
+
+                // add/update tooltips 
+                for (var i = 0; i < errorList.length; i++) {
+                    var error = errorList[i];
+
+                    $("#Errors").append("<li>" + error.message + "</li>");
+                }
+            }
+        });
+        $( document ).ready(function() {
+            MyApp.init();
+            @RenderSection("ScriptOnReady", false)
+        });
+    </script>
+</body>
+</html>

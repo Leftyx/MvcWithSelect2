@@ -1,0 +1,33 @@
+﻿@model MvcWithSelect2.Models.Person
+@using MvcWithSelect2.Infrastructure.Mvc
+
+@using (@Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "formEditPerson", @class = "form-horizontal" }))
+{ 
+    <div>
+        @Html.LabelFor(f => f.Code, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Code, new { @class = "input-xxlarge", @placeholder = "" })
+        @Html.ValidationMessageFor(m => m.Code, " ")
+    </div>
+
+    <div>
+        @Html.LabelFor(f => f.Name, new { @class = "control-label" })
+        @Html.TextBoxFor(m => m.Name, new { @class = "input-xxlarge", @placeholder = "" })
+        @Html.ValidationMessageFor(m => m.Name, " ")
+    </div>
+    
+    <div>
+        @Html.LabelFor(f => f.Country, new { @class = "control-label" })
+        @Html.HiddenFor(m => m.CountryDescription)
+        @Html.Select2For(m => m.Country, new { @class = "input-xlarge select2" })
+        @Html.ValidationMessageFor(m => m.Country, " ")
+    </div>
+     
+    @Html.ValidationSummary(true)
+
+    <button id="Save" type="submit">Save</button>
+    <br />
+    @Html.ActionLink("Preload", "Index", "Home", new {id = "1"}, null);
+}
+@section ScriptOnReady {
+    MyApp.CountriesLookup('#Country', '#CountryDescription', '@Url.Action("FetchCountries", "Home")' );
+}
