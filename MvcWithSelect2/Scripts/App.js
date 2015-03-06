@@ -9,10 +9,10 @@
     MyApp.render = function () {
     };
 
-    MyApp.CountriesLookup = function (lookupCode, lookupDescription, urlFetchCountries) {
+    MyApp.CountriesLookup = function (lookupCode, lookupDescription, urlFetchCountries, multiple) {
         $(lookupCode).select2({
             minimumInputLength: 0,
-            multiple: false,
+            multiple: multiple || false,
             quietMillis: 400,
             allowClear: true,
             ajax: {
@@ -32,13 +32,24 @@
                 }
             },
             initSelection: function (item, callback) {
-                var id = item.val();
-                var text = item.data('option');
-                if (!text) {
-                    text = "";
+                if (!multiple) {
+                    var id = item.val();
+                    var text = item.data('option');
+                    if (!text) {
+                        text = "";
+                    }
+                    var data = { id: id, text: text };
+                    callback(data);
                 }
-                var data = { id: id, text: text };
-                callback(data);
+                else {
+                    var data = [];
+                    var items = item.val().split(',');
+                    $.each(items, function (index, item) {
+                        data.push({ id: item, text: item });
+                    });
+                    $(lookupCode).val('');
+                    callback(data);
+                }
             },
             formatResult: function (item) { return ('<div>' + item.id + ' - ' + item.text + '</div>'); },
             formatSelection: function (item) {
@@ -48,7 +59,7 @@
                 if (lookupDescription) {
                     $(lookupDescription).val(item.text);
                 }
-                return (item.text);
+                return (multiple ? item.id : item.text);
             },
             dropdownCssClass: "bigdrop",
             escapeMarkup: function (m) { return m; }

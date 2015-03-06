@@ -20,5 +20,11 @@
         [MvcWithSelect2.Infrastructure.Mvc.Select2Attribute(dataPlaceholder: "Choose Country", dataOption: "CountryDescription")]
         public string Country { get; set; }
         public string CountryDescription { get; set; }
+
+        [DisplayName("Countries")]
+        [Required(ErrorMessage = "{0}: Madatory field.")]
+        [StringLength(1000, ErrorMessage = "{0}: Maximum length {1} chars.")]
+        [MvcWithSelect2.Infrastructure.Mvc.Select2Attribute(dataPlaceholder: "Choose Country")]
+        public string Countries { get; set; }
     }
 }

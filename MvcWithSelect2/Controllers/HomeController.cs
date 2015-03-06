@@ -17,7 +17,10 @@ namespace MvcWithSelect2.Controllers
             {
                 viewModel.Code = 1;
                 viewModel.Name = "John";
-                viewModel.Country = "UK"; viewModel.CountryDescription = "United Kingdom";
+                viewModel.Country = "UK"; 
+                viewModel.CountryDescription = "United Kingdom";
+
+                viewModel.Countries = "IT,UK";
             }
 
             return View(viewModel);

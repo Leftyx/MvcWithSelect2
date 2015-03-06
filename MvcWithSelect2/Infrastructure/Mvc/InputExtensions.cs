@@ -34,15 +34,40 @@ namespace MvcWithSelect2.Infrastructure.Mvc
 
         public static IHtmlString Select2For<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string format, object htmlAttributes)
         {
-            return htmlHelper.Select2For(expression, format: format, htmlAttributes: HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes));
+            return htmlHelper.Select2For(expression, format: format, htmlAttributes: HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes), multiple: false);
         }
 
         public static IHtmlString Select2For<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IDictionary<string, object> htmlAttributes)
         {
-            return htmlHelper.Select2For(expression, format: null, htmlAttributes: htmlAttributes);
+            return htmlHelper.Select2For(expression, format: null, htmlAttributes: htmlAttributes, multiple: false);
         }
 
-        public static IHtmlString Select2For<TModel, TValue>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TValue>> expression, string format, IDictionary<string, object> htmlAttributes)
+        public static IHtmlString Select2MultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression)
+        {
+            return htmlHelper.Select2MultipleFor(expression, format: null);
+        }
+
+        public static IHtmlString Select2MultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string format)
+        {
+            return htmlHelper.Select2MultipleFor(expression, format, (IDictionary<string, object>)null);
+        }
+
+        public static IHtmlString Select2MultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, object htmlAttributes)
+        {
+            return htmlHelper.Select2MultipleFor(expression, format: null, htmlAttributes: htmlAttributes);
+        }
+
+        public static IHtmlString Select2MultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, string format, object htmlAttributes)
+        {
+            return htmlHelper.Select2For(expression, format: format, htmlAttributes: HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes), multiple: true);
+        }
+
+        public static IHtmlString Select2MultipleFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IDictionary<string, object> htmlAttributes)
+        {
+            return htmlHelper.Select2For(expression, format: null, htmlAttributes: htmlAttributes, multiple: true);
+        }
+
+        public static IHtmlString Select2For<TModel, TValue>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TValue>> expression, string format, IDictionary<string, object> htmlAttributes, bool multiple)
         {
             ModelMetadata metadata = ModelMetadata.FromLambdaExpression(expression, htmlHelper.ViewData);
             string name = ExpressionHelper.GetExpressionText(expression);
@@ -51,7 +76,14 @@ namespace MvcWithSelect2.Infrastructure.Mvc
 
             if (metadata.Model != null)
             {
-                value = metadata.Model.ToString();
+                if ((metadata.ModelType == typeof(Guid)) && ((Guid)metadata.Model == Guid.Empty))
+                {
+                    value = string.Empty;
+                }
+                else
+                {
+                    value = metadata.Model.ToString();
+                }
             }
 
             string fullName = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
@@ -60,10 +92,16 @@ namespace MvcWithSelect2.Infrastructure.Mvc
                 throw new ArgumentException("Cannot find fullName.");
             }
 
-            System.Web.Mvc.TagBuilder tagBuilder = new TagBuilder("input");
+            System.Web.Mvc.TagBuilder tagBuilder = null;
+
+            tagBuilder = new TagBuilder("input");
             tagBuilder.MergeAttributes(htmlAttributes);
             tagBuilder.MergeAttribute("type", HtmlHelper.GetInputTypeString(InputType.Hidden));
-            tagBuilder.MergeAttribute("name", fullName, true);
+            tagBuilder.MergeAttribute("name", !multiple ? fullName : fullName + "[]", true);
+            if (multiple)
+            {
+                tagBuilder.MergeAttribute("multiple", "", true);
+            }
 
             if (metadata.AdditionalValues != null)
             {
@@ -82,6 +120,10 @@ namespace MvcWithSelect2.Infrastructure.Mvc
 
                     tagBuilder.MergeAttribute(DATA_OPTION, dataOptionValue ?? "");
                 }
+                //if (multiple && metadata.AdditionalValues.ContainsKey(DATA_SPLIT))
+                //{
+                //    tagBuilder.MergeAttribute(DATA_SPLIT, metadata.AdditionalValues[DATA_SPLIT].ToString());
+                //}
             }
 
             string valueParameter = htmlHelper.FormatValue(value, format);

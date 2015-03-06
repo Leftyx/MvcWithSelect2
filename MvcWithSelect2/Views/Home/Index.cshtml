@@ -22,6 +22,16 @@
         @Html.ValidationMessageFor(m => m.Country, " ")
     </div>
      
+    <div>
+        @Html.LabelFor(f => f.Countries, new { @class = "control-label" })
+        @Html.Select2MultipleFor(m => m.Countries, new { @class = "input-xlarge select2" })
+    </div>
+
+    @*<div>
+        <label class="control-label" for="Countriez">Countries</label>
+        <input class="input-xlarge select2" data-placeholder="Choose Country" id="Countriez" multiple="multiple" name="Countries[]" type="hidden" data-option="[Italy, United Kingdom]" value="[IT, UK]" />
+    </div>*@
+    
     @Html.ValidationSummary(true)
 
     <button id="Save" type="submit">Save</button>
@@ -30,4 +40,6 @@
 }
 @section ScriptOnReady {
     MyApp.CountriesLookup('#Country', '#CountryDescription', '@Url.Action("FetchCountries", "Home")' );
+    MyApp.CountriesLookup('#Countries', null, '@Url.Action("FetchCountries", "Home")', true );
+    @*MyApp.CountriesLookup('#Countriez', '#Countriez', '@Url.Action("FetchCountries", "Home")', true );*@
 }
